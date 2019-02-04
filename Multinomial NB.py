@@ -1,33 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Dec 28 13:54:28 2018
-
-@author: Mathew
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 16 19:00:05 2018
+Created on Thu Jan 03 19:00:05 2019
 
 @author: Mathew
 """
 
 # Importing the libraries
+
 import matplotlib.pyplot as plt
+from sklearn import metrics
+
 import pandas as pd
 import seaborn as sns
 import string
 from nltk.corpus import stopwords
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 
 # Importing the dataset
-amazon = pd.read_csv('200.csv')
+
+amazon = pd.read_csv('1000.csv')
+
+#Removing null entries
+
+amazon.isnull().sum()
+amazon = amazon.fillna(' ')
 amazon.shape
 
 # Text Length 
+
 amazon['text length'] = amazon['reviewText'].apply(len)
 
 # Plotting distribution diagram
@@ -36,7 +39,8 @@ g = sns.FacetGrid(data=amazon, col='overall')
 g.map(plt.hist, 'text length', bins=50)
 
 # Creating a class with only 5 and 1 stars 
-amazon_class = amazon[(amazon['overall'] == 1) | (amazon['overall'] == 5)]
+
+amazon_class = amazon[(amazon['overall'] <=3 ) | (amazon['overall'] >=3)]
 amazon_class.shape
 
 # Generating X and Y coordinates
@@ -72,7 +76,16 @@ nb.fit(X_train, y_train)
 
 preds = nb.predict(X_test)
 
+#Print Results
+
 print(confusion_matrix(y_test, preds))
 print('\n')
 print(classification_report(y_test, preds))
-print(accuracy_score(y_test, preds, normalize=True, sample_weight=None))
+print("Accuracy = ", accuracy_score(y_test, preds, normalize=True, sample_weight=None))
+
+def eval_predictions(y_test, preds):
+    print('accuracy:', metrics.accuracy_score(y_test, preds))
+    print('precision:', metrics.precision_score(y_test, preds, average='weighted'))
+    print('recall:', metrics.recall_score(y_test, preds, average='weighted'))
+    print('F-measure:', metrics.f1_score(y_test, preds, average='weighted'))
+eval_predictions(y_test, preds)
