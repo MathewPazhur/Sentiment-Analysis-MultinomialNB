@@ -9,15 +9,15 @@ Created on Thu Jan 03 19:00:05 2019
 
 import matplotlib.pyplot as plt
 from sklearn import metrics
-
 import pandas as pd
 import seaborn as sns
 import string
 from nltk.corpus import stopwords
-from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
+
+#from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
 # Importing the dataset
 
@@ -40,7 +40,7 @@ g.map(plt.hist, 'text length', bins=50)
 
 # Creating a class with only 5 and 1 stars 
 
-amazon_class = amazon[(amazon['overall'] <=3 ) | (amazon['overall'] >=3)]
+amazon_class = amazon[(amazon['overall'] <3 ) | (amazon['overall'] >3)]
 amazon_class.shape
 
 # Generating X and Y coordinates
@@ -76,12 +76,12 @@ nb.fit(X_train, y_train)
 
 preds = nb.predict(X_test)
 
-#Print Results
+# Print the Results
 
-print(confusion_matrix(y_test, preds))
-print('\n')
-print(classification_report(y_test, preds))
-print("Accuracy = ", accuracy_score(y_test, preds, normalize=True, sample_weight=None))
+#print(confusion_matrix(y_test, preds))
+#print('\n')
+#print(classification_report(y_test, preds))
+#print("Accuracy = ", accuracy_score(y_test, preds, normalize=True, sample_weight=None))
 
 def eval_predictions(y_test, preds):
     print('accuracy:', metrics.accuracy_score(y_test, preds))
@@ -89,3 +89,4 @@ def eval_predictions(y_test, preds):
     print('recall:', metrics.recall_score(y_test, preds, average='weighted'))
     print('F-measure:', metrics.f1_score(y_test, preds, average='weighted'))
 eval_predictions(y_test, preds)
+
